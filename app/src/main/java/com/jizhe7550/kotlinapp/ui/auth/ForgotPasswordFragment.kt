@@ -12,7 +12,7 @@ import com.jizhe7550.kotlinapp.R
 /**
  * A simple [Fragment] subclass.
  */
-class ForgotPasswordFragment : Fragment() {
+class ForgotPasswordFragment : BaseAuthFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
