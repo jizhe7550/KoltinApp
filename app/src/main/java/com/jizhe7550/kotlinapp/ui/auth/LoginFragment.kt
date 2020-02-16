@@ -2,12 +2,17 @@ package com.jizhe7550.kotlinapp.ui.auth
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 
 import com.jizhe7550.kotlinapp.R
+import com.jizhe7550.kotlinapp.util.ApiEmptyResponse
+import com.jizhe7550.kotlinapp.util.ApiErrorResponse
+import com.jizhe7550.kotlinapp.util.ApiSuccessResponse
 
 /**
  * A simple [Fragment] subclass.
@@ -22,5 +27,23 @@ class LoginFragment : BaseAuthFragment() {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "LoginFragment: ${viewModel}")
 
+        viewModel.testLogin().observe(viewLifecycleOwner, Observer { response ->
+
+            when(response){
+                is ApiSuccessResponse ->{
+                    Log.d(TAG, "LOGIN RESPONSE: ${response.body}")
+                }
+                is ApiErrorResponse ->{
+                    Log.d(TAG, "LOGIN RESPONSE: ${response.errorMessage}")
+                }
+                is ApiEmptyResponse ->{
+                    Log.d(TAG, "LOGIN RESPONSE: Empty Response")
+                }
+            }
+        })
+    }
 }
