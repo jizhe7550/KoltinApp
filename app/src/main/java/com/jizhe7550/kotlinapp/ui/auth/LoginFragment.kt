@@ -3,20 +3,17 @@ package com.jizhe7550.kotlinapp.ui.auth
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 
 import com.jizhe7550.kotlinapp.R
-import com.jizhe7550.kotlinapp.util.ApiEmptyResponse
-import com.jizhe7550.kotlinapp.util.ApiErrorResponse
-import com.jizhe7550.kotlinapp.util.ApiSuccessResponse
+import com.jizhe7550.kotlinapp.ui.auth.state.AuthStateEvent.*
+import com.jizhe7550.kotlinapp.ui.auth.state.LoginFields
+import kotlinx.android.synthetic.main.fragment_login.*
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class LoginFragment : BaseAuthFragment() {
 
     override fun onCreateView(
@@ -29,21 +26,41 @@ class LoginFragment : BaseAuthFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "LoginFragment: ${viewModel}")
+        Log.d(TAG, "LoginFragment: $viewModel")
 
-        viewModel.testLogin().observe(viewLifecycleOwner, Observer { response ->
+        subscribeObservers()
 
-            when(response){
-                is ApiSuccessResponse ->{
-                    Log.d(TAG, "LOGIN RESPONSE: ${response.body}")
-                }
-                is ApiErrorResponse ->{
-                    Log.d(TAG, "LOGIN RESPONSE: ${response.errorMessage}")
-                }
-                is ApiEmptyResponse ->{
-                    Log.d(TAG, "LOGIN RESPONSE: Empty Response")
-                }
+        login_button.setOnClickListener {
+            login()
+        }
+    }
+
+    fun subscribeObservers() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            it.loginFields?.let {
+                it.login_email?.let { input_email.setText(it) }
+                it.login_password?.let { input_password.setText(it) }
             }
         })
     }
+
+    fun login() {
+        viewModel.setStateEvent(
+            LoginAttemptEvent(
+                input_email.text.toString(),
+                input_password.text.toString()
+            )
+        )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.setLoginFields(
+            LoginFields(
+                input_email.text.toString(),
+                input_password.text.toString()
+            )
+        )
+    }
+
 }

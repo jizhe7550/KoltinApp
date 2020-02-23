@@ -5,6 +5,7 @@ import com.jizhe7550.kotlinapp.di.auth.AuthModule
 import com.jizhe7550.kotlinapp.di.auth.AuthScope
 import com.jizhe7550.kotlinapp.di.auth.AuthViewModelModule
 import com.jizhe7550.kotlinapp.ui.auth.AuthActivity
+import com.jizhe7550.kotlinapp.ui.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -18,4 +19,6 @@ abstract class ActivityBuildersModule {
     )
     abstract fun contributeAuthActivity(): AuthActivity
 
+    @ContributesAndroidInjector
+    abstract fun contributeMainActivity(): MainActivity
 }
