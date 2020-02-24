@@ -19,8 +19,7 @@ import kotlinx.android.synthetic.main.activity_auth.*
 import javax.inject.Inject
 
 class AuthActivity : BaseActivity(),
-    NavController.OnDestinationChangedListener
-{
+    NavController.OnDestinationChangedListener {
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
@@ -46,7 +45,7 @@ class AuthActivity : BaseActivity(),
         checkPreviousAuthUser()
     }
 
-    private fun subscribeObservers(){
+    private fun subscribeObservers() {
 
         viewModel.dataState.observe(this, Observer { dataState ->
             onDataStateChange(dataState)
@@ -59,10 +58,10 @@ class AuthActivity : BaseActivity(),
                         }
                     }
                 }
-                data.response?.let{event ->
-                    event.peekContent().let{ response ->
-                        response.message?.let{ message ->
-                            if(message == RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE){
+                data.response?.let { event ->
+                    event.peekContent().let { response ->
+                        response.message?.let { message ->
+                            if (message == RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE) {
                                 onFinishCheckPreviousAuthUser()
                             }
                         }
@@ -71,44 +70,47 @@ class AuthActivity : BaseActivity(),
             }
         })
 
-        viewModel.viewState.observe(this, Observer{
+        viewModel.viewState.observe(this, Observer {
             Log.d(TAG, "AuthActivity, subscribeObservers: AuthViewState: ${it}")
-            it.authToken?.let{
+            it.authToken?.let {
                 sessionManager.login(it)
             }
         })
 
-        sessionManager.cachedToken.observe(this, Observer{ dataState ->
+        sessionManager.cachedToken.observe(this, Observer { dataState ->
             Log.d(TAG, "AuthActivity, subscribeObservers: AuthDataState: ${dataState}")
-            dataState.let{ authToken ->
-                if(authToken != null && authToken.account_pk != -1 && authToken.token != null){
+            dataState.let { authToken ->
+                if (authToken != null && authToken.account_pk != -1 && authToken.token != null) {
                     navMainActivity()
                 }
             }
         })
     }
 
-    fun navMainActivity(){
+    fun navMainActivity() {
         Log.d(TAG, "navMainActivity: called.")
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun checkPreviousAuthUser(){
+    private fun checkPreviousAuthUser() {
         viewModel.setStateEvent(AuthStateEvent.CheckPreviousAuthEvent())
     }
 
-    private fun onFinishCheckPreviousAuthUser(){
+    private fun onFinishCheckPreviousAuthUser() {
         fragment_container.visibility = View.VISIBLE
     }
 
-    override fun displayProgressBar(bool: Boolean){
-        if(bool){
+    override fun displayProgressBar(bool: Boolean) {
+        if (bool) {
             progress_bar.visibility = View.VISIBLE
-        }
-        else{
+        } else {
             progress_bar.visibility = View.GONE
         }
+    }
+
+    override fun expandAppBar() {
+        // ignore
     }
 }
